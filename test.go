@@ -67,8 +67,6 @@ func menu() {
 		case 7:
 			generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
 		case 8:
-			selectionSortEngagement(&data, sizeKonten) //mengurutkan konten dengan cara selection sort berdasarkan engagement
-		case 9:
 			tampilkanSemuaKonten() // menampilkan semua konten
 		case 0:
 			fmt.Println("Terima kasih, program selesai.")
@@ -189,7 +187,7 @@ func cariKontenDenganKeywordSeqSearch(keyword string, arr *kontenArray, n int) {
 	}
 }
 
-//fungsi mencari konten dengan engagement tertinggi dengan logika nilai ekstrim
+// fungsi mencari konten dengan engagement tertinggi dengan logika nilai ekstrim
 func cariEngagementTertinggi(arr kontenArray, n int) int {
 	var maxValue int
 	var maxIndex, i int
@@ -211,7 +209,7 @@ func cariEngagementTertinggi(arr kontenArray, n int) int {
 
 }
 
-//mengurutkan konten berdasarkan engagement tertinggi
+// mengurutkan konten berdasarkan engagement tertinggi
 func selectionSortEngagement(arr *kontenArray, n int) {
 	var pass, idx, i int
 	var temp konten
