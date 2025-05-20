@@ -38,8 +38,7 @@ func menu() {
 		fmt.Println("5. Urutkan Konten berdasarkan Engagement (Selection Sort)")
 		fmt.Println("6. Urutkan Konten berdasarkan Tanggal (Insertion Sort)")
 		fmt.Println("7. Rekomendasi Caption dan Hashtag")
-		fmt.Println("8. Tampilkan Konten dengan Engagement Tertinggi pada Periode")
-		fmt.Println("9. Tampilkan semua konten")
+		fmt.Println("8. Tampilkan semua konten")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih menu: ")
 
