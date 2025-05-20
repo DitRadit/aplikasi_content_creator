@@ -109,16 +109,14 @@ func tambahKonten() {
 // untuk memberikan nilai sebuah kalimat ke suatu variable, menggunakan for loop, kondisi kalimat selesai/berhenti adalah ketika user menginputkan -1
 func inputKalimatSampaiMinusSatu() string {
 	var kata, kalimat string
-	for {
-		fmt.Scan(&kata)
-		if kata == "-1" {
-			break
-		}
+	fmt.Scan(&kata)
+	for kata != "-1" {
 		if kalimat == "" {
 			kalimat = kata
 		} else {
 			kalimat += " " + kata
 		}
+		fmt.Scan(&kata)
 	}
 	return kalimat
 }
