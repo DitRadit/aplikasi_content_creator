@@ -65,7 +65,7 @@ func menu() {
 		case 6:
 			insertionSortTanggal(&data, sizeKonten) // insertion sott berdasarkan tanggal
 		case 7:
-			generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
+			//generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
 		case 8:
 			tampilkanSemuaKonten() // menampilkan semua konten
 		case 0:
@@ -185,27 +185,6 @@ func cariKontenDenganKeywordSeqSearch(keyword string, arr *kontenArray, n int) {
 	}
 }
 
-// fungsi mencari konten dengan engagement tertinggi dengan logika nilai ekstrim
-func cariEngagementTertinggi(arr kontenArray, n int) int {
-	var maxValue int
-	var maxIndex, i int
-
-	if n == 0 {
-		return -1
-	}
-
-	maxValue = arr[0].Engagement
-	maxIndex = 0
-
-	for i = 1; i < n; i++ {
-		if arr[i].Engagement > maxValue {
-			maxValue = arr[i].Engagement
-			maxIndex = i
-		}
-	}
-	return maxIndex
-
-}
 
 // mengurutkan konten berdasarkan engagement tertinggi
 func selectionSortEngagement(arr *kontenArray, n int) {
@@ -255,46 +234,3 @@ func insertionSortTanggal(arr *kontenArray, n int) {
 
 }
 
-// Mengenerate caption dan hashtag berdasarkan ide dan hashtag dari konten yang memiliki engagement tertinggi
-func generateRekomendasiCaptiondanHashtag(arr kontenArray, n int) {
-	var idx, i int
-	var ide, platform, caption, kata string
-	idx = cariEngagementTertinggi(arr, n)
-
-	if idx == -1 {
-		fmt.Println("Konten tidak ditemukan")
-		return
-	} else {
-		ide = arr[idx].Ide
-		platform = arr[idx].Platform
-
-		switch platform {
-		case "Instagram":
-			caption = caption + " Jangan lewatkan! " + ide + " #InstaGood"
-		case "Twitter":
-			caption = caption + ide + " #TrendingNow"
-		case "Facebook":
-			caption = caption + "👍 Simak " + ide + " dan bagikan kepada teman!"
-		default:
-			caption = caption + "Check this out: " + ide + "!"
-		}
-		fmt.Println("Rekomendasi Caption :", caption)
-		fmt.Println("Rekomendasi Hashtag")
-		for i = 0; i < len(ide); i++ {
-			if ide[i] == ' ' {
-				if kata != "" {
-					fmt.Printf("#%s ", kata)
-					kata = ""
-				}
-			} else {
-				kata = kata + string(ide[i])
-			}
-		}
-		if kata != "" {
-			fmt.Printf("#%s ", kata)
-		}
-
-		fmt.Println()
-	}
-
-}
