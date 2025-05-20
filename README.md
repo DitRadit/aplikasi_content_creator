@@ -39,10 +39,4 @@ Aplikasi berbasis bahasa pemrograman Go (Golang) untuk pengelolaan konten media 
   - Tanggal: 2025-05-20
   - Engagement: 1500
 
-## Lisensi
-
-Program ini disediakan tanpa lisensi tertentu. Pengguna dapat menggunakannya untuk tujuan belajar dan pengembangan.
-
----
-
 Jika ingin saya buatkan file `.md` ini siap untuk kamu unduh, beri tahu saja!
