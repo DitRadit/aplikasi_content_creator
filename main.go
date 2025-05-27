@@ -82,6 +82,7 @@ func menu() {
 func tambahKonten() {
 	var k konten
 	var discard string
+
 	fmt.Print("Masukkan Ide Konten (akhiri dengan -1): ")
 	k.Ide = inputKalimatSampaiMinusSatu()
 
@@ -411,7 +412,8 @@ func deleteKonten(data *kontenArray, size *int) {
 	idx = pilihan - 1
 
 	// Geser elemen setelah idx ke kiri
-	for i := idx; i < *size-1; i++ {
+	var i int
+	for i = idx; i < *size-1; i++ {
 		(*data)[i] = (*data)[i+1]
 	}
 
@@ -420,6 +422,7 @@ func deleteKonten(data *kontenArray, size *int) {
 }
 
 func ubahKonten(data *kontenArray, sizeKonten *int) {
+	var discard string
 	tampilkanSemuaKonten()
 
 	if *sizeKonten == 0 {
@@ -461,18 +464,20 @@ func ubahKonten(data *kontenArray, sizeKonten *int) {
 
 	// Platform
 	fmt.Printf("Platform [%s]: ", (*data)[idx].Platform)
-	fmt.Scanln(&input)
-	if input == "-1" {
+	var platform string
+	fmt.Scanln(&platform)
+	fmt.Scan(&discard)
+	if platform == "-1" {
 		fmt.Println("Pengubahan dibatalkan")
 		return
 	}
-	if input != "" {
-		(*data)[idx].Platform = input
+	if platform != "" {
+		(*data)[idx].Platform = platform
 	}
 
 	// Tanggal
 	fmt.Printf("Tanggal [%s]: ", (*data)[idx].Tanggal)
-	fmt.Scanln(&input)
+	fmt.Scan(&input)
 	if input == "-1" {
 		fmt.Println("Pengubahan dibatalkan")
 		return
@@ -484,7 +489,7 @@ func ubahKonten(data *kontenArray, sizeKonten *int) {
 	// Engagement
 	fmt.Printf("Engagement [%d] (isi -1 untuk tidak mengubah): ", (*data)[idx].Engagement)
 	var engagement int
-	fmt.Scanln(&engagement)
+	fmt.Scan(&engagement)
 	if engagement != -1 {
 		(*data)[idx].Engagement = engagement
 	}
