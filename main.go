@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 const NMAX int = 100
@@ -52,9 +54,9 @@ func menu() {
 		case 1:
 			tambahKonten()
 		case 2:
-			// ubahKonten()
+			ubahKonten(&data, &sizeKonten)
 		case 3:
-			// hapusKonten()
+			deleteKonten(&data, &sizeKonten)
 		case 4:
 			fmt.Print("Masukkan kata kunci pencarian: ")
 			fmt.Scanln(&keyword)
@@ -64,7 +66,7 @@ func menu() {
 		case 6:
 			insertionSortTanggal(&data, sizeKonten) // insertion sott berdasarkan tanggal
 		case 7:
-			//generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
+			generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
 		case 8:
 			tampilkanSemuaKonten() // menampilkan semua konten
 		case 0:
@@ -184,7 +186,7 @@ func cariKontenDenganKeywordSeqSearch(keyword string, arr *kontenArray, n int) {
 	}
 }
 
-// mengurutkan konten berdasarkan engagement tertinggi
+// mengurutkan konten berdasarkan engagement tertinggi(Desc)
 func selectionSortEngagement(arr *kontenArray, n int) {
 	var pass, idx, i int
 	var temp konten
@@ -210,7 +212,7 @@ func selectionSortEngagement(arr *kontenArray, n int) {
 	tampilkanSemuaKonten()
 }
 
-// Mengurutkan konten berdasarkan tanggal terbaru konten
+// Mengurutkan konten berdasarkan tanggal terbaru konten(Desc)
 func insertionSortTanggal(arr *kontenArray, n int) {
 	var pass, i int
 	var temp konten
@@ -230,4 +232,262 @@ func insertionSortTanggal(arr *kontenArray, n int) {
 	fmt.Println("\nKonten berhasil diurutkan berdasarkan tanggal dari tinggi ke rendah:")
 	tampilkanSemuaKonten()
 
+}
+
+// Mengenerate caption dan hashtag berdasarkan ide dan hashtag dari konten yang memiliki engagement tertinggi
+func generateRekomendasiCaptiondanHashtag(arr kontenArray, n int) {
+	var idx, i int
+	var ide, platform, caption, kata string
+	idx = cariEngagementTertinggi(arr, n)
+
+	if idx == -1 {
+		fmt.Println("Konten tidak ditemukan")
+		return
+	}
+
+	ide = arr[idx].Ide
+	platform = arr[idx].Platform
+
+	rand.Seed(time.Now().UnixNano())
+
+	switch platform {
+	case "Instagram":
+		switch rand.Intn(10) {
+		case 0:
+			caption = fmt.Sprintf("🔥 %s sekarang trending di Instagram! Yuk intip!", ide)
+		case 1:
+			caption = fmt.Sprintf("📸 Jangan lewatkan! %s hanya di Instagram!", ide)
+		case 2:
+			caption = fmt.Sprintf("Bagikan %s ke story kamu sekarang juga!", ide)
+		case 3:
+			caption = fmt.Sprintf("Temukan %s di Instagram hari ini!", ide)
+		case 4:
+			caption = fmt.Sprintf("Yuk cek %s dan jadikan hari kamu lebih berwarna!", ide)
+		case 5:
+			caption = fmt.Sprintf("Jangan sampai ketinggalan %s di Instagram!", ide)
+		case 6:
+			caption = fmt.Sprintf("Inilah alasan kenapa %s jadi favorit!", ide)
+		case 7:
+			caption = fmt.Sprintf("Bergabung bersama kami dengan %s sekarang!", ide)
+		case 8:
+			caption = fmt.Sprintf("Cerita seru tentang %s ada di Instagram!", ide)
+		case 9:
+			caption = fmt.Sprintf("Instagram kamu akan lebih menarik dengan %s!", ide)
+		}
+	case "Twitter":
+		switch rand.Intn(10) {
+		case 0:
+			caption = fmt.Sprintf("%s sedang ramai diperbincangkan. Ikutan yuk! 🐦", ide)
+		case 1:
+			caption = fmt.Sprintf("Trending topik: %s. Apa pendapatmu?", ide)
+		case 2:
+			caption = fmt.Sprintf("Tweet ini tentang %s wajib kamu baca!", ide)
+		case 3:
+			caption = fmt.Sprintf("Berita terbaru: %s, langsung dari Twitter.", ide)
+		case 4:
+			caption = fmt.Sprintf("Jangan lewatkan pembahasan %s di Twitter!", ide)
+		case 5:
+			caption = fmt.Sprintf("Ikuti diskusi seru tentang %s!", ide)
+		case 6:
+			caption = fmt.Sprintf("%s bikin heboh Twitter hari ini!", ide)
+		case 7:
+			caption = fmt.Sprintf("Suka %s? Yuk, ngobrol di Twitter!", ide)
+		case 8:
+			caption = fmt.Sprintf("Baca tweet trending %s sekarang juga!", ide)
+		case 9:
+			caption = fmt.Sprintf("Twitter hangat dengan topik %s!", ide)
+		}
+	case "Facebook":
+		switch rand.Intn(10) {
+		case 0:
+			caption = fmt.Sprintf("👍 Simak %s dan bagikan ke teman Facebook kamu!", ide)
+		case 1:
+			caption = fmt.Sprintf("%s bisa jadi topik menarik buat diskusi!", ide)
+		case 2:
+			caption = fmt.Sprintf("Sudah lihat %s di Facebook hari ini?", ide)
+		case 3:
+			caption = fmt.Sprintf("Bagikan %s supaya teman kamu juga tahu!", ide)
+		case 4:
+			caption = fmt.Sprintf("Yuk, komentar tentang %s di Facebook!", ide)
+		case 5:
+			caption = fmt.Sprintf("Postingan terbaru: %s, jangan sampai kelewatan!", ide)
+		case 6:
+			caption = fmt.Sprintf("Facebook makin seru dengan %s!", ide)
+		case 7:
+			caption = fmt.Sprintf("Mari diskusi %s bersama komunitas Facebook!", ide)
+		case 8:
+			caption = fmt.Sprintf("Temukan hal menarik tentang %s di Facebook.", ide)
+		case 9:
+			caption = fmt.Sprintf("Facebook update: %s, langsung dari kami!", ide)
+		}
+	default:
+		switch rand.Intn(10) {
+		case 0:
+			caption = fmt.Sprintf("Check this out: %s!", ide)
+		case 1:
+			caption = fmt.Sprintf("%s adalah topik hangat hari ini!", ide)
+		case 2:
+			caption = fmt.Sprintf("Kamu wajib tahu tentang %s!", ide)
+		case 3:
+			caption = fmt.Sprintf("Ini dia %s yang sedang ramai dibicarakan.", ide)
+		case 4:
+			caption = fmt.Sprintf("Temukan fakta menarik tentang %s!", ide)
+		case 5:
+			caption = fmt.Sprintf("Baca selengkapnya tentang %s di sini.", ide)
+		case 6:
+			caption = fmt.Sprintf("Jangan lewatkan info terbaru tentang %s!", ide)
+		case 7:
+			caption = fmt.Sprintf("Yuk, kenali %s lebih dekat.", ide)
+		case 8:
+			caption = fmt.Sprintf("Berita hangat: %s!", ide)
+		case 9:
+			caption = fmt.Sprintf("Update terbaru mengenai %s, baca sekarang!", ide)
+		}
+	}
+
+	fmt.Println("Rekomendasi Caption :", caption)
+
+	// Generate Hashtag dari kata-kata dalam ide
+	fmt.Println("Rekomendasi Hashtag:")
+	for i = 0; i < len(ide); i++ {
+		if ide[i] == ' ' {
+			if kata != "" {
+				fmt.Printf("#%s ", kata)
+				kata = ""
+			}
+		} else {
+			kata += string(ide[i])
+		}
+	}
+	if kata != "" {
+		fmt.Printf("#%s", kata)
+	}
+	fmt.Println()
+}
+
+// fungsi mencari konten dengan engagement tertinggi dengan logika nilai ekstrim
+func cariEngagementTertinggi(arr kontenArray, n int) int {
+	var maxValue int
+	var maxIndex, i int
+
+	if n == 0 {
+		return -1
+	}
+
+	maxValue = arr[0].Engagement
+	maxIndex = 0
+
+	for i = 1; i < n; i++ {
+		if arr[i].Engagement > maxValue {
+			maxValue = arr[i].Engagement
+			maxIndex = i
+		}
+	}
+	return maxIndex
+}
+
+func deleteKonten(data *kontenArray, size *int) {
+	if *size == 0 {
+		fmt.Println("Belum ada konten yang dapat dihapus.")
+		return
+	}
+
+	tampilkanSemuaKonten()
+
+	var pilihan int
+	fmt.Print("Masukkan nomor konten yang ingin dihapus (0 untuk batal): ")
+	fmt.Scanln(&pilihan)
+
+	if pilihan == 0 {
+		fmt.Println("Penghapusan dibatalkan.")
+		return
+	}
+
+	if pilihan < 1 || pilihan > *size {
+		fmt.Println("Nomor tidak valid.")
+		return
+	}
+	var idx int
+	idx = pilihan - 1
+
+	// Geser elemen setelah idx ke kiri
+	for i := idx; i < *size-1; i++ {
+		(*data)[i] = (*data)[i+1]
+	}
+
+	*size--
+	fmt.Println("Konten berhasil dihapus.")
+}
+
+func ubahKonten(data *kontenArray, sizeKonten *int) {
+	tampilkanSemuaKonten()
+
+	if *sizeKonten == 0 {
+		fmt.Println("Tidak ada konten yang dapat diubah")
+		return
+	}
+
+	var noPilihan int
+	fmt.Print("\nPilih nomor konten yang ingin diubah (0 untuk batal): ")
+	fmt.Scanln(&noPilihan)
+
+	if noPilihan < 0 || noPilihan > *sizeKonten {
+		fmt.Println("Nomor tidak valid")
+		return
+	}
+
+	if noPilihan == 0 {
+		fmt.Println("Dibatalkan")
+		return
+	}
+	var idx int
+	idx = noPilihan - 1
+
+	fmt.Println("\nMasukkan -1 untuk tidak mengubah nilai field (khusus integer)")
+	fmt.Println("Biarkan kosong dan tekan Enter untuk tidak mengubah (khusus teks)")
+
+	var input string
+
+	// Ide Konten
+	fmt.Printf("Ide Konten [%s]: ", (*data)[idx].Ide)
+	input = inputKalimatSampaiMinusSatu()
+	if input == "-1" {
+		fmt.Println("Pengubahan dibatalkan")
+		return
+	}
+	if input != "" {
+		(*data)[idx].Ide = input
+	}
+
+	// Platform
+	fmt.Printf("Platform [%s]: ", (*data)[idx].Platform)
+	fmt.Scanln(&input)
+	if input == "-1" {
+		fmt.Println("Pengubahan dibatalkan")
+		return
+	}
+	if input != "" {
+		(*data)[idx].Platform = input
+	}
+
+	// Tanggal
+	fmt.Printf("Tanggal [%s]: ", (*data)[idx].Tanggal)
+	fmt.Scanln(&input)
+	if input == "-1" {
+		fmt.Println("Pengubahan dibatalkan")
+		return
+	}
+	if input != "" {
+		(*data)[idx].Tanggal = input
+	}
+
+	// Engagement
+	fmt.Printf("Engagement [%d] (isi -1 untuk tidak mengubah): ", (*data)[idx].Engagement)
+	var engagement int
+	fmt.Scanln(&engagement)
+	if engagement != -1 {
+		(*data)[idx].Engagement = engagement
+	}
+
+	fmt.Println("Konten berhasil diperbarui!")
 }
