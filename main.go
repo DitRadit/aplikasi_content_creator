@@ -11,17 +11,11 @@ const NMAX int = 100
 type konten struct {
 	Ide        string
 	Platform   string
-	Caption    string
-	Hashtag    string
 	Tanggal    string
 	Engagement int
 }
 
-type kontenArray [NMAX]konten
-
-var data kontenArray
-
-var sizeKonten int = 0
+type tabKonten [NMAX]konten
 
 func main() {
 	menu()
@@ -30,18 +24,25 @@ func main() {
 // Menampilkan menu user
 func menu() {
 	var keyword string
-
+	var data tabKonten
+	var sizeKonten int
+	sizeKonten = 0
 	for {
 		fmt.Println("\n=== Aplikasi AI Pembuat Konten Sosial Media ===")
-		fmt.Println("1. Tambah Konten")
-		fmt.Println("2. Ubah Konten")
-		fmt.Println("3. Hapus Konten")
-		fmt.Println("4. Cari Konten dengan keyword (Sequential Search)")
-		fmt.Println("5. Urutkan Konten berdasarkan Engagement (Selection Sort)")
-		fmt.Println("6. Urutkan Konten berdasarkan Tanggal (Insertion Sort)")
-		fmt.Println("7. Rekomendasi Caption dan Hashtag")
-		fmt.Println("8. Tampilkan semua konten")
-		fmt.Println("0. Keluar")
+		fmt.Println("+----+-------------------------------------------------------------+")
+		fmt.Println("| No | Menu                                                        |")
+		fmt.Println("+----+-------------------------------------------------------------+")
+		fmt.Println("| 1  | Tambah Konten                                               |")
+		fmt.Println("| 2  | Ubah Konten                                                 |")
+		fmt.Println("| 3  | Hapus Konten                                                |")
+		fmt.Println("| 4  | Cari Konten yang mirip dengan keyword (Sequential Search)   |")
+		fmt.Println("| 5  | Cari Konten menurut tanggal           (Binary Search)       |")
+		fmt.Println("| 6  | Urutkan Konten berdasarkan Engagement (Selection Sort)      |")
+		fmt.Println("| 7  | Urutkan Konten berdasarkan Tanggal    (Insertion Sort)      |")
+		fmt.Println("| 8  | Rekomendasi Caption dan Hashtag                             |")
+		fmt.Println("| 9  | Tampilkan semua konten                                      |")
+		fmt.Println("| 0  | Keluar                                                      |")
+		fmt.Println("+----+-------------------------------------------------------------+")
 		fmt.Print("Pilih menu: ")
 
 		var pilih int
@@ -52,23 +53,28 @@ func menu() {
 
 		switch pilih {
 		case 1:
-			tambahKonten()
+			tambahKonten(&data, &sizeKonten)
 		case 2:
-			ubahKonten(&data, &sizeKonten)
+			ubahKonten(&data, sizeKonten)
 		case 3:
 			deleteKonten(&data, &sizeKonten)
 		case 4:
 			fmt.Print("Masukkan kata kunci pencarian: ")
 			fmt.Scanln(&keyword)
-			cariKontenDenganKeywordSeqSearch(keyword, &data, sizeKonten) //sequential search
+			cariKontenDenganKeywordSeqSearch(keyword, data, sizeKonten) //sequential search
 		case 5:
-			selectionSortEngagement(&data, sizeKonten) // selection sort berdasarkan engagement
+			fmt.Print("Masukkan kata kunci tanggal: ")
+			fmt.Scanln(&keyword)
+			printKontenByIndex(keyword, data, sizeKonten) //Binary search
 		case 6:
-			insertionSortTanggal(&data, sizeKonten) // insertion sott berdasarkan tanggal
+			selectionSortEngagement(&data, sizeKonten) // selection sort berdasarkan engagement
 		case 7:
-			generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
+			insertionSortTanggal(&data, sizeKonten) // insertion sott berdasarkan tanggal
+			tampilkanSemuaKonten(data, sizeKonten)
 		case 8:
-			tampilkanSemuaKonten() // menampilkan semua konten
+			generateRekomendasiCaptiondanHashtag(data, sizeKonten) // mengenerate caption dan hashtag berdasarkan ide dan platform konten
+		case 9:
+			tampilkanSemuaKonten(data, sizeKonten) // menampilkan semua konten
 		case 0:
 			fmt.Println("Terima kasih, program selesai.")
 			return
@@ -78,34 +84,39 @@ func menu() {
 	}
 }
 
-// Menambahkan konten dari inputan user
-func tambahKonten() {
+// Menambahkan konten dari inputan user dengan tampilan lebih rapi
+func tambahKonten(data *tabKonten, sizeKonten *int) {
+	if *sizeKonten >= NMAX {
+		fmt.Println("Gagal menambahkan: daftar konten sudah penuh!")
+		return
+	}
+
 	var k konten
 	var discard string
 
-	fmt.Print("Masukkan Ide Konten (akhiri dengan -1): ")
+	fmt.Println("\n+--------------------------------------+")
+	fmt.Println("|         Tambah Konten Baru           |")
+	fmt.Println("+--------------------------------------+")
+
+	fmt.Print("Masukkan Ide Konten (akhiri dengan -1):\n> ")
 	k.Ide = inputKalimatSampaiMinusSatu()
 
-	fmt.Print("Masukkan Platform: ")
+	fmt.Print("Masukkan Platform:\n> ")
 	fmt.Scan(&k.Platform)
-	// Membersihkan newline dari buffer(karena ga bisa pake bufio)
 	fmt.Scanln(&discard)
 
-	fmt.Print("Masukkan Tanggal (YYYY-MM-DD): ")
+	fmt.Print("Masukkan Tanggal (YYYY-MM-DD):\n> ")
 	fmt.Scan(&k.Tanggal)
 	fmt.Scanln(&discard)
 
-	fmt.Print("Masukkan Engagement: ")
+	fmt.Print("Masukkan Engagement:\n> ")
 	fmt.Scan(&k.Engagement)
 	fmt.Scanln(&discard)
 
-	if sizeKonten < NMAX {
-		data[sizeKonten] = k
-		sizeKonten++
-		fmt.Println("Konten berhasil ditambahkan.")
-	} else {
-		fmt.Println("Daftar konten penuh!")
-	}
+	data[*sizeKonten] = k
+	*sizeKonten++
+
+	fmt.Println("\nKonten berhasil ditambahkan ke dalam daftar!")
 }
 
 // untuk memberikan nilai sebuah kalimat ke suatu variable, menggunakan for loop, kondisi kalimat selesai/berhenti adalah ketika user menginputkan -1
@@ -124,22 +135,23 @@ func inputKalimatSampaiMinusSatu() string {
 }
 
 // Menampilkan semua konten
-func tampilkanSemuaKonten() {
-	var i int
+func tampilkanSemuaKonten(data tabKonten, sizeKonten int) {
 	if sizeKonten == 0 {
-		fmt.Println("Belum ada konten yang ditambahkan.")
+		fmt.Println("\nBelum ada konten yang ditambahkan.")
 		return
 	}
 
-	fmt.Println("\n--- Daftar Semua Konten ---")
-	for i = 0; i < sizeKonten; i++ {
-		fmt.Printf("Konten #%d:\n", i+1)
-		fmt.Printf("  Ide       : %s\n", data[i].Ide)
-		fmt.Printf("  Platform  : %s\n", data[i].Platform)
-		fmt.Printf("  Tanggal   : %s\n", data[i].Tanggal)
-		fmt.Printf("  Engagement: %d\n", data[i].Engagement)
-		fmt.Println()
+	fmt.Println("\nDaftar Semua Konten")
+	fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+	fmt.Println("| No   | Ide                                                                                                  | Platform    | Tanggal    | Engagement  |")
+	fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+
+	for i := 0; i < sizeKonten; i++ {
+		fmt.Printf("| %-4d | %-100s | %-11s | %-10s | %-11d |\n",
+			i+1, data[i].Ide, data[i].Platform, data[i].Tanggal, data[i].Engagement)
 	}
+
+	fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
 }
 
 // Sequential search kata per kata
@@ -159,36 +171,74 @@ func seqSearchKataPerKata(kata string, text string) bool {
 }
 
 // mencari konten dengan keyword dengan bantuan seqsearch kata per kata
-func cariKontenDenganKeywordSeqSearch(keyword string, arr *kontenArray, n int) {
+func cariKontenDenganKeywordSeqSearch(keyword string, data tabKonten, n int) {
 	var hasil [NMAX]konten
 	var i, jumlahHasil int
 	jumlahHasil = 0
 
 	for i = 0; i < n; i++ {
-		if seqSearchKataPerKata(keyword, arr[i].Ide) {
+		if seqSearchKataPerKata(keyword, data[i].Ide) {
 			if jumlahHasil < NMAX {
-				hasil[jumlahHasil] = arr[i]
+				hasil[jumlahHasil] = data[i]
 				jumlahHasil++
 			}
 		}
 	}
 
+	// Menampilkan hasil pencarian
 	if jumlahHasil > 0 {
-		fmt.Println("Konten yang mengandung keyword:")
+		fmt.Println("\nKonten yang mengandung keyword:", keyword)
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+		fmt.Println("| No   | Ide                                                                                                  | Platform    | Tanggal    | Engagement  |")
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+
 		for i = 0; i < jumlahHasil; i++ {
-			fmt.Printf("  Ide       : %s\n", hasil[i].Ide)
-			fmt.Printf("  Platform  : %s\n", hasil[i].Platform)
-			fmt.Printf("  Tanggal   : %s\n", hasil[i].Tanggal)
-			fmt.Printf("  Engagement: %d\n", hasil[i].Engagement)
-			fmt.Println()
+			fmt.Printf("| %-4d | %-100s | %-11s | %-10s | %-11d |\n",
+				i+1, hasil[i].Ide, hasil[i].Platform, hasil[i].Tanggal, hasil[i].Engagement)
 		}
+
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
 	} else {
-		fmt.Println("Tidak ada konten yang sesuai dengan keyword.")
+		fmt.Printf("\nTidak ada konten yang mengandung keyword: \"%s\"\n", keyword)
+	}
+}
+func cariKontenDenganTanggalBinarySearch(keyword string, data tabKonten, n int) int {
+	insertionSortTanggal(&data, n)
+	var left, right, mid int
+	left = 0
+	right = n - 1
+	for left <= right {
+		mid = (left + right) / 2
+		if data[mid].Tanggal == keyword {
+			return mid
+		} else if data[mid].Tanggal > keyword {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	return -1
+}
+
+func printKontenByIndex(keyword string, data tabKonten, n int) {
+	var idx int
+	idx = cariKontenDenganTanggalBinarySearch(keyword, data, n)
+	if idx != -1 {
+		fmt.Println("\nKonten yang mengandung tanggal:", keyword)
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+		fmt.Println("| No   | Ide                                                                                                  | Platform    | Tanggal    | Engagement  |")
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+
+		fmt.Printf("| %-4d | %-100s | %-11s | %-10s | %-11d |\n",
+			idx+1, data[idx].Ide, data[idx].Platform, data[idx].Tanggal, data[idx].Engagement)
+		fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+	} else {
+		fmt.Printf("\nTidak ada konten yang mengandung tanggal: \"%s\"\n", keyword)
 	}
 }
 
 // mengurutkan konten berdasarkan engagement tertinggi(Desc)
-func selectionSortEngagement(arr *kontenArray, n int) {
+func selectionSortEngagement(data *tabKonten, n int) {
 	var pass, idx, i int
 	var temp konten
 
@@ -198,56 +248,55 @@ func selectionSortEngagement(arr *kontenArray, n int) {
 		idx = pass - 1
 		i = pass
 		for i < n {
-			if arr[idx].Engagement < arr[i].Engagement {
+			if data[idx].Engagement < data[i].Engagement {
 				idx = i
 			}
 			i = i + 1
 		}
-		temp = arr[pass-1]
-		arr[pass-1] = arr[idx]
-		arr[idx] = temp
+		temp = data[pass-1]
+		data[pass-1] = data[idx]
+		data[idx] = temp
 		pass = pass + 1
 	}
 
 	fmt.Println("\nKonten berhasil diurutkan berdasarkan engagement dari tinggi ke rendah:")
-	tampilkanSemuaKonten()
+	tampilkanSemuaKonten(*data, n)
 }
 
 // Mengurutkan konten berdasarkan tanggal terbaru konten(Desc)
-func insertionSortTanggal(arr *kontenArray, n int) {
+func insertionSortTanggal(data *tabKonten, n int) {
 	var pass, i int
 	var temp konten
 
 	pass = 1
 	for pass <= n-1 {
 		i = pass
-		temp = arr[pass]
-		for i > 0 && temp.Tanggal > arr[i-1].Tanggal {
-			arr[i] = arr[i-1]
+		temp = data[pass]
+		for i > 0 && temp.Tanggal > data[i-1].Tanggal {
+			data[i] = data[i-1]
 			i = i - 1
 		}
-		arr[i] = temp
+		data[i] = temp
 		pass = pass + 1
 	}
 
 	fmt.Println("\nKonten berhasil diurutkan berdasarkan tanggal dari tinggi ke rendah:")
-	tampilkanSemuaKonten()
 
 }
 
 // Mengenerate caption dan hashtag berdasarkan ide dan hashtag dari konten yang memiliki engagement tertinggi
-func generateRekomendasiCaptiondanHashtag(arr kontenArray, n int) {
+func generateRekomendasiCaptiondanHashtag(data tabKonten, n int) {
 	var idx, i int
 	var ide, platform, caption, kata string
-	idx = cariEngagementTertinggi(arr, n)
+	idx = cariEngagementTertinggi(data, n)
 
 	if idx == -1 {
 		fmt.Println("Konten tidak ditemukan")
 		return
 	}
 
-	ide = arr[idx].Ide
-	platform = arr[idx].Platform
+	ide = data[idx].Ide
+	platform = data[idx].Platform
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -346,10 +395,11 @@ func generateRekomendasiCaptiondanHashtag(arr kontenArray, n int) {
 		}
 	}
 
-	fmt.Println("Rekomendasi Caption :", caption)
+	fmt.Println("\nRekomendasi Caption:")
+	fmt.Printf("   \"%s\"\n", caption)
 
 	// Generate Hashtag dari kata-kata dalam ide
-	fmt.Println("Rekomendasi Hashtag:")
+	fmt.Println("\nRekomendasi Hashtag:")
 	for i = 0; i < len(ide); i++ {
 		if ide[i] == ' ' {
 			if kata != "" {
@@ -367,7 +417,7 @@ func generateRekomendasiCaptiondanHashtag(arr kontenArray, n int) {
 }
 
 // fungsi mencari konten dengan engagement tertinggi dengan logika nilai ekstrim
-func cariEngagementTertinggi(arr kontenArray, n int) int {
+func cariEngagementTertinggi(data tabKonten, n int) int {
 	var maxValue int
 	var maxIndex, i int
 
@@ -375,25 +425,28 @@ func cariEngagementTertinggi(arr kontenArray, n int) int {
 		return -1
 	}
 
-	maxValue = arr[0].Engagement
+	maxValue = data[0].Engagement
 	maxIndex = 0
 
 	for i = 1; i < n; i++ {
-		if arr[i].Engagement > maxValue {
-			maxValue = arr[i].Engagement
+		if data[i].Engagement > maxValue {
+			maxValue = data[i].Engagement
 			maxIndex = i
 		}
 	}
 	return maxIndex
 }
 
-func deleteKonten(data *kontenArray, size *int) {
-	if *size == 0 {
+func deleteKonten(data *tabKonten, n *int) {
+	fmt.Println("\n+--------------------------------------+")
+	fmt.Println("|         Hapus Konten                 |")
+	fmt.Println("+--------------------------------------+")
+	if *n == 0 {
 		fmt.Println("Belum ada konten yang dapat dihapus.")
 		return
 	}
 
-	tampilkanSemuaKonten()
+	tampilkanSemuaKonten(*data, *n)
 
 	var pilihan int
 	fmt.Print("Masukkan nomor konten yang ingin dihapus (0 untuk batal): ")
@@ -404,7 +457,7 @@ func deleteKonten(data *kontenArray, size *int) {
 		return
 	}
 
-	if pilihan < 1 || pilihan > *size {
+	if pilihan < 1 || pilihan > *n {
 		fmt.Println("Nomor tidak valid.")
 		return
 	}
@@ -413,86 +466,82 @@ func deleteKonten(data *kontenArray, size *int) {
 
 	// Geser elemen setelah idx ke kiri
 	var i int
-	for i = idx; i < *size-1; i++ {
+	for i = idx; i < *n-1; i++ {
 		(*data)[i] = (*data)[i+1]
 	}
 
-	*size--
+	*n--
 	fmt.Println("Konten berhasil dihapus.")
 }
 
-func ubahKonten(data *kontenArray, sizeKonten *int) {
-	var discard string
-	tampilkanSemuaKonten()
-
-	if *sizeKonten == 0 {
-		fmt.Println("Tidak ada konten yang dapat diubah")
+func ubahKonten(data *tabKonten, sizeKonten int) {
+	fmt.Println("\n+--------------------------------------+")
+	fmt.Println("|           Ubah Konten                |")
+	fmt.Println("+--------------------------------------+")
+	if sizeKonten == 0 {
+		fmt.Println("Belum ada konten yang ditambahkan.")
 		return
-	}
+	} else {
+		tampilkanSemuaKonten(*data, sizeKonten)
+		fmt.Println("Pilihlah nomor konten yang ingin di ubah :")
+		var index int
+		fmt.Scan(&index)
+		if index == 0 {
+			fmt.Println("Batal mengubah konten")
+			return
+		} else if index < 1 || index > sizeKonten {
+			fmt.Println("Nomor konten tidak valid")
+			return
+		} else {
+			index = index - 1
+			for {
+				fmt.Println("\n--- Sub-Menu Ubah Konten ---")
+				fmt.Println("1. Ubah Ide")
+				fmt.Println("2. Ubah Platform")
+				fmt.Println("3. Ubah Tanggal")
+				fmt.Println("4. Ubah Engagement")
+				fmt.Println("0. Kembali ke Menu Utama")
+				fmt.Print("Pilihan: ")
 
-	var noPilihan int
-	fmt.Print("\nPilih nomor konten yang ingin diubah (0 untuk batal): ")
-	fmt.Scanln(&noPilihan)
+				var pilihan int
+				var discard string
+				fmt.Scan(&pilihan)
+				fmt.Scanln(&discard)
 
-	if noPilihan < 0 || noPilihan > *sizeKonten {
-		fmt.Println("Nomor tidak valid")
-		return
-	}
+				switch pilihan {
+				case 1:
+					fmt.Print("Masukkan ide baru (akhiri dengan -1):\n> ")
+					data[index].Ide = inputKalimatSampaiMinusSatu()
+					fmt.Println("Ide berhasil diubah.")
+				case 2:
+					fmt.Print("Masukkan Platform baru :\n> ")
+					fmt.Scan(&data[index].Platform)
+					fmt.Scanln(&discard)
+					fmt.Println("Platform berhasil diubah.")
+				case 3:
+					fmt.Print("Masukkan Tanggal baru (YYYY-MM-DD) :\n> ")
+					fmt.Scan(&data[index].Tanggal)
+					fmt.Scanln(&discard)
+					fmt.Println("Tanggal berhasil diubah.")
+				case 4:
+					fmt.Print("Masukkan Engagement baru :\n> ")
+					fmt.Scan(&data[index].Engagement)
+					fmt.Scanln(&discard)
+					fmt.Println("Engagement berhasil diubah.")
+				case 0:
+					fmt.Println("Kembali ke menu utama.")
+					fmt.Println("\nDaftar Konten Terbaru")
+					fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+					fmt.Println("| No   | Ide                                                                                                  | Platform    | Tanggal    | Engagement  |")
+					fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
 
-	if noPilihan == 0 {
-		fmt.Println("Dibatalkan")
-		return
+					fmt.Printf("| %-4d | %-100s | %-11s | %-10s | %-11d |\n", index+1, data[index].Ide, data[index].Platform, data[index].Tanggal, data[index].Engagement)
+					fmt.Println("+------+------------------------------------------------------------------------------------------------------+-------------+------------+-------------+")
+					return
+				default:
+					fmt.Println("Pilihan tidak valid")
+				}
+			}
+		}
 	}
-	var idx int
-	idx = noPilihan - 1
-
-	fmt.Println("\nMasukkan -1 untuk tidak mengubah nilai field (khusus integer)")
-	fmt.Println("Biarkan kosong dan tekan Enter untuk tidak mengubah (khusus teks)")
-
-	var input string
-
-	// Ide Konten
-	fmt.Printf("Ide Konten [%s]: ", (*data)[idx].Ide)
-	input = inputKalimatSampaiMinusSatu()
-	if input == "-1" {
-		fmt.Println("Pengubahan dibatalkan")
-		return
-	}
-	if input != "" {
-		(*data)[idx].Ide = input
-	}
-
-	// Platform
-	fmt.Printf("Platform [%s]: ", (*data)[idx].Platform)
-	var platform string
-	fmt.Scanln(&platform)
-	fmt.Scan(&discard)
-	if platform == "-1" {
-		fmt.Println("Pengubahan dibatalkan")
-		return
-	}
-	if platform != "" {
-		(*data)[idx].Platform = platform
-	}
-
-	// Tanggal
-	fmt.Printf("Tanggal [%s]: ", (*data)[idx].Tanggal)
-	fmt.Scan(&input)
-	if input == "-1" {
-		fmt.Println("Pengubahan dibatalkan")
-		return
-	}
-	if input != "" {
-		(*data)[idx].Tanggal = input
-	}
-
-	// Engagement
-	fmt.Printf("Engagement [%d] (isi -1 untuk tidak mengubah): ", (*data)[idx].Engagement)
-	var engagement int
-	fmt.Scan(&engagement)
-	if engagement != -1 {
-		(*data)[idx].Engagement = engagement
-	}
-
-	fmt.Println("Konten berhasil diperbarui!")
 }
