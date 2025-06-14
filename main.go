@@ -114,7 +114,7 @@ func tambahKonten(data *tabKonten, sizeKonten *int) {
 	fmt.Scanln(&discard)
 
 	data[*sizeKonten] = k
-	*sizeKonten++
+	*sizeKonten = *sizeKonten + 1
 
 	fmt.Println("\nKonten berhasil ditambahkan ke dalam daftar!")
 }
@@ -178,10 +178,8 @@ func cariKontenDenganKeywordSeqSearch(keyword string, data tabKonten, n int) {
 
 	for i = 0; i < n; i++ {
 		if seqSearchKataPerKata(keyword, data[i].Ide) {
-			if jumlahHasil < NMAX {
-				hasil[jumlahHasil] = data[i]
-				jumlahHasil++
-			}
+			hasil[jumlahHasil] = data[i]
+			jumlahHasil++
 		}
 	}
 
@@ -470,7 +468,7 @@ func deleteKonten(data *tabKonten, n *int) {
 		(*data)[i] = (*data)[i+1]
 	}
 
-	*n--
+	*n = *n - 1
 	fmt.Println("Konten berhasil dihapus.")
 }
 
